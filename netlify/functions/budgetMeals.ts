@@ -17,7 +17,7 @@ export const handler = async (event: any) => {
     });
 
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-pro",
       contents: `
 Find 5 healthy and nutritious meal options commonly available in India
 for approximately ${amount} ${currency}.

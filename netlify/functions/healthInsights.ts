@@ -17,7 +17,7 @@ export const handler = async (event: any) => {
     });
 
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-pro",
       contents: `
 Find recent nutritional research, health benefits, or dietary warnings for "${foodName}".
 Return a concise 2–3 sentence summary suitable for Indian dietary context.
