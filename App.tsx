@@ -12,6 +12,10 @@ const App: React.FC = () => {
   const [view, setView] = useState<'dashboard' | 'analyzer' | 'result' | 'budgetFinder'>('dashboard');
   const [currentResult, setCurrentResult] = useState<AnalysisResult | null>(null);
   const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('fitbitez_theme');
+    return saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  });
 
   useEffect(() => {
     const savedLogs = localStorage.getItem('fitbitez_logs');
@@ -23,6 +27,18 @@ const App: React.FC = () => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('fitbitez_theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('fitbitez_theme', 'light');
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
   const saveLog = () => {
     if (!currentResult) return;
@@ -49,11 +65,13 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50/50">
+    <div className="min-h-screen flex flex-col bg-gray-50/50 dark:bg-slate-950 transition-colors duration-300">
       <Header 
         onStartAnalysis={() => setView('analyzer')} 
         onNavigate={handleNavigation}
         currentView={view}
+        isDarkMode={isDarkMode}
+        toggleTheme={toggleTheme}
       />
       
       <main className="flex-grow">
