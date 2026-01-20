@@ -1,3 +1,9 @@
+function extractJson(text: string): string {
+  return text
+    .replace(/```json/i, "")
+    .replace(/```/g, "")
+    .trim();
+}
 export const handler = async (event: any) => {
   try {
     if (event.httpMethod !== "POST") {
@@ -55,14 +61,19 @@ Analyze this food image and return STRICT JSON with:
     }
 
     const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    if (!text) throw new Error("No text returned from Gemini");
+if (!rawText) {
+  throw new Error("No text returned from Gemini");
+}
 
-    return {
-      statusCode: 200,
-      body: text,
-    };
+const cleanJson = extractJson(rawText);
+
+return {
+  statusCode: 200,
+  body: cleanJson,
+};
+
   } catch (err: any) {
     console.error("analyzeFood error:", err);
     return {
