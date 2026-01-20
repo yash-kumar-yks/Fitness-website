@@ -1,0 +1,7 @@
+{
+  "name": "FitBitez",
+  "description": "AI-powered meal tracking and health companion. Analyze food photos to track calories and discover healthier alternatives.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
