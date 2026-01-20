@@ -1,61 +1,39 @@
-import { GoogleGenAI, Type } from "@google/genai";
-
 export const handler = async (event: any) => {
   try {
-    if (event.httpMethod !== "POST") {
-      return { statusCode: 405, body: "Method Not Allowed" };
-    }
-
     const { amount, currency = "INR" } = JSON.parse(event.body || "{}");
+    const apiKey = process.env.GEMINI_API_KEY;
 
-    if (!amount || isNaN(Number(amount))) {
-      return { statusCode: 400, body: "Invalid budget amount" };
-    }
-
-    const ai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY!,
-    });
-
-    const response = await ai.models.generateContent({
-      model: "gemini-pro",
-      contents: `
-Find 5 healthy and nutritious meal options commonly available in India
-for approximately ${amount} ${currency}.
-Focus on street food, tiffin meals, or home-style dishes.
-      `,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              name: { type: Type.STRING },
-              estimatedPrice: { type: Type.STRING },
-              healthBenefits: { type: Type.STRING },
-              calories: { type: Type.STRING },
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `
+Find 5 healthy Indian meals around ${amount} ${currency}.
+Return JSON array with:
+name, estimatedPrice, healthBenefits, calories
+                  `,
+                },
+              ],
             },
-            required: [
-              "name",
-              "estimatedPrice",
-              "healthBenefits",
-              "calories",
-            ],
-          },
-        },
-      },
-    });
+          ],
+        }),
+      }
+    );
 
-    if (!response.text) {
-      throw new Error("No response from Gemini");
-    }
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     return {
       statusCode: 200,
-      body: response.text,
+      body: text,
     };
   } catch (err: any) {
-    console.error("budgetMeals error:", err);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: err.message }),

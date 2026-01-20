@@ -1,55 +1,38 @@
-import { GoogleGenAI } from "@google/genai";
-
 export const handler = async (event: any) => {
   try {
-    if (event.httpMethod !== "POST") {
-      return { statusCode: 405, body: "Method Not Allowed" };
-    }
-
     const { foodName } = JSON.parse(event.body || "{}");
+    const apiKey = process.env.GEMINI_API_KEY;
 
-    if (!foodName) {
-      return { statusCode: 400, body: "Missing foodName" };
-    }
-
-    const ai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY!,
-    });
-
-    const response = await ai.models.generateContent({
-      model: "gemini-pro",
-      contents: `
-Find recent nutritional research, health benefits, or dietary warnings for "${foodName}".
-Return a concise 2–3 sentence summary suitable for Indian dietary context.
-      `,
-      config: {
-        tools: [{ googleSearch: {} }],
-      },
-    });
-
-    // Extract grounded sources
-    const sources: { title: string; uri: string }[] = [];
-    const chunks =
-      response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-
-    chunks.forEach((chunk: any) => {
-      if (chunk.web?.title && chunk.web?.uri) {
-        sources.push({
-          title: chunk.web.title,
-          uri: chunk.web.uri,
-        });
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `Give 2–3 sentence health insights for ${foodName} with Indian dietary context.`,
+                },
+              ],
+            },
+          ],
+        }),
       }
-    });
+    );
+
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        text: response.text || "No insights found.",
-        sources,
+        text,
+        sources: [], // REST v1 does not return grounding chunks
       }),
     };
   } catch (err: any) {
-    console.error("healthInsights error:", err);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: err.message }),
