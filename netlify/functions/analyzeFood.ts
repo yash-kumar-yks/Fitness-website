@@ -64,7 +64,7 @@ Analyze this food image and return STRICT JSON with:
     const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
 if (!rawText) {
-  throw new Error("No text returned from Gemini");
+  throw new Error("No text returned from AI");
 }
 
 const cleanJson = extractJson(rawText);

@@ -6,10 +6,14 @@ import Dashboard from './components/Dashboard';
 import Analyzer from './components/Analyzer';
 import ResultView from './components/ResultView';
 import BudgetFinder from './components/BudgetFinder';
+import LegalModal, { LegalType } from './components/LegalModal';
+
 import { AnalysisResult, LogEntry } from './types';
 
 const App: React.FC = () => {
   const [view, setView] = useState<'dashboard' | 'analyzer' | 'result' | 'budgetFinder'>('dashboard');
+    const [legalView, setLegalView] = useState<LegalType>(null);
+
   const [currentResult, setCurrentResult] = useState<AnalysisResult | null>(null);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -107,7 +111,10 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      <Footer />
+      <Footer onOpenLegal={(type) => setLegalView(type)} />
+      
+      {/* Global Legal Modal */}
+      <LegalModal type={legalView} onClose={() => setLegalView(null)} />
     </div>
   );
 };

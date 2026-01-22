@@ -69,7 +69,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartAnalysis, logs }) => {
                 <circle cx="12" cy="15" r="3.5" className="fill-emerald-900" />
               </svg>
             </div>
-            <span className="text-2xl tracking-tight">Snap & Log</span>
+            <span className="text-2xl tracking-tight">Take a Snap</span>
           </button>
         </div>
       </section>
@@ -79,7 +79,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartAnalysis, logs }) => {
         <h2 className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.4em] mb-4">About FitBitez.in</h2>
         <h3 className="text-4xl font-black text-gray-900 dark:text-white mb-8 tracking-tighter leading-tight">Healthy eating shouldn't be expensive or complicated.</h3>
         <p className="text-gray-500 dark:text-slate-400 text-xl leading-relaxed font-medium">
-          FitBitez was born from a simple mission: to make world-class nutritional advice accessible to every Indian household. By combining Gemini AI with local market data, we help you make the best choices for your health and your wallet.
+          FitBitez was born from a simple mission: to make world-class nutritional advice accessible to every Indian household. By combining AI with local market data, we help you make the best choices for your health and your wallet.
         </p>
       </section>
 

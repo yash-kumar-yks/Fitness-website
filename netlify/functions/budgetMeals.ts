@@ -60,7 +60,7 @@ Each item must have:
       .join("\n");
 
     if (!combinedText) {
-      throw new Error("No Gemini response text found");
+      throw new Error("No AI response text found");
     }
 
     // 🧹 Strip accidental markdown

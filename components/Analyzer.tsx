@@ -97,7 +97,7 @@ const Analyzer: React.FC<AnalyzerProps> = ({ onComplete, onCancel }) => {
                 <div className="flex flex-col items-center justify-center py-8 space-y-4">
                   <div className="w-12 h-12 border-4 border-emerald-500 dark:border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
                   <div className="text-center">
-                    <p className="text-emerald-700 dark:text-emerald-400 font-bold text-lg animate-pulse">Analyzing with Gemini AI...</p>
+                    <p className="text-emerald-700 dark:text-emerald-400 font-bold text-lg animate-pulse">Analyzing with AI...</p>
                     <p className="text-gray-400 dark:text-slate-500 text-sm mt-1">Identifying ingredients and estimating nutrients</p>
                   </div>
                 </div>
