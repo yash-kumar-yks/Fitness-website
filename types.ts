@@ -5,12 +5,23 @@ export interface HealthyAlternative {
   benefits: string;
 }
 
+export interface Macronutrients {
+  protein: number;
+  carbohydrates: number;
+  fats: number;
+}
+
 export interface BudgetMeal {
   name: string;
-  estimatedPrice: string;
+  estimatedPrice: number;     // ✅ number
   healthBenefits: string;
-  calories: string;
+  calories: number;           // ✅ number
+
+  macronutrients?: Macronutrients;
+  cookingSteps?: string[];
 }
+
+
 
 export interface NutritionInfo {
   foodName: string;

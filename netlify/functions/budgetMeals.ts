@@ -7,12 +7,10 @@ function extractJson(text: string): string {
 
 export const handler = async (event: any) => {
   try {
-    const { amount, currency = "INR" } = JSON.parse(event.body || "{}");
-    const apiKey = process.env.GEMINI_API_KEY;
+    const { amount, preferences = [] } = JSON.parse(event.body || "{}");
 
-    if (!amount) {
-      throw new Error("Amount is required");
-    }
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error("GEMINI_API_KEY not set");
 
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
@@ -25,21 +23,21 @@ export const handler = async (event: any) => {
               parts: [
                 {
                   text: `
-Return ONLY valid JSON.
-Do NOT use markdown or explanations.
+Return ONLY valid JSON array.
+No markdown.
+No explanation.
 
-Return array:
-[
-  {
-    "name": string,
-    "estimatedPrice": string,
-    "healthBenefits": string,
-    "calories": string
-  }
-]
+Find 5 healthy Indian meals around ${amount} INR.
+Preferences: ${preferences.join(", ")}
 
-Find 5 healthy Indian meals around ${amount} ${currency}.
-                  `,
+Each item must have:
+- name
+- estimatedPrice
+- healthBenefits
+- calories
+- macronutrients
+- cookingSteps (array)
+                  `.trim(),
                 },
               ],
             },
@@ -49,18 +47,34 @@ Find 5 healthy Indian meals around ${amount} ${currency}.
     );
 
     const data = await res.json();
-    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    if (!rawText) {
-      throw new Error("No response text from Gemini");
+    // 🔥 DEBUG LOG (critical)
+    console.log("Gemini raw response:", JSON.stringify(data, null, 2));
+
+    // ✅ Extract ALL text parts safely
+    const parts = data?.candidates?.[0]?.content?.parts ?? [];
+
+    const combinedText = parts
+      .map((p: any) => p.text)
+      .filter(Boolean)
+      .join("\n");
+
+    if (!combinedText) {
+      throw new Error("No Gemini response text found");
     }
 
-    const cleanJson = extractJson(rawText);
-    JSON.parse(cleanJson); // validate
+    // 🧹 Strip accidental markdown
+    const clean = combinedText
+      .replace(/```json/i, "")
+      .replace(/```/g, "")
+      .trim();
+
+    // ✅ Validate JSON
+    const parsed = JSON.parse(clean);
 
     return {
       statusCode: 200,
-      body: cleanJson,
+      body: JSON.stringify(parsed),
     };
   } catch (err: any) {
     console.error("budgetMeals error:", err);

@@ -49,17 +49,20 @@ export const getHealthInsights = async (
  */
 export const findHealthyMealsByBudget = async (
   amount: number,
-  currency: string = "INR"
+  preferences: string[] = []
 ): Promise<BudgetMeal[]> => {
   const res = await fetch("/.netlify/functions/budgetMeals", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ amount, currency }),
+    body: JSON.stringify({
+      amount,
+      preferences,
+    }),
   });
 
   if (!res.ok) {
-    throw new Error(await res.text());
+    throw new Error("Failed to fetch budget meals");
   }
 
-  return JSON.parse(await res.text()) as BudgetMeal[];
+  return res.json();
 };
