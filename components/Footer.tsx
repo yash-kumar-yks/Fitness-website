@@ -76,7 +76,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenLegal }) => {
             <div className="max-w-2xl">
               <p className="text-gray-400 dark:text-slate-500 text-xs font-bold leading-relaxed">
                 <span className="text-gray-900 dark:text-slate-300 block mb-2 uppercase tracking-widest">Medical Disclaimer</span>
-                FitBitez.in is intended for informational and educational purposes only. The nutritional estimates and budget suggestions provided by our AI are approximations. Please consult with a healthcare professional before significant diet changes.
+                FitBitez is intended for informational and educational purposes only. The nutritional estimates and budget suggestions provided by our AI are approximations. Please consult with a healthcare professional before significant diet changes.
               </p>
             </div>
             <div className="flex flex-col text-right">
